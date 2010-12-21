@@ -1,6 +1,7 @@
 package bank.bankieren;
 
 import fontys.observer.Publisher;
+import fontys.observer.RemotePropertyListener;
 import fontys.util.*;
 import java.rmi.RemoteException;
 
@@ -51,4 +52,22 @@ public interface IBank extends Publisher {
 	 * @return de naam van deze bank
 	 */
 	String getName() throws RemoteException;
+
+        /**
+         * Voeg listener aan publisher
+         * @param listener
+         * @param property
+         * @throws RemoteException
+         *          Als server niet kan worden gevonden
+         */
+        public void addListener(RemotePropertyListener listener, String property) throws RemoteException;
+
+         /**
+         * Voeg listener aan publisher
+         * @param listener
+         * @param property
+         * @throws RemoteException
+         *          Als server niet kan worden gevonden
+         */
+        public void removeListener(RemotePropertyListener listener, String property) throws RemoteException;
 }
