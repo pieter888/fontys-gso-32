@@ -39,7 +39,7 @@ public class IBankTest {
     }
 
     @Test
-    public void testOpenRekening()
+    public void testOpenRekening() throws RemoteException
     {
         int rTest = b1.openRekening("Mike", "Tilburg");
         boolean bool = b1.getRekening(r1).getEigenaar().equals(b1.getRekening(rTest).getEigenaar());
@@ -53,7 +53,7 @@ public class IBankTest {
     }
 
     @Test(expected = RuntimeException.class)
-    public void testMaakOverBestemmingGelijk() throws NumberDoesntExistException
+    public void testMaakOverBestemmingGelijk() throws NumberDoesntExistException, RemoteException
     {
  	 /* @param bron
 	 * @param bestemming
@@ -64,7 +64,7 @@ public class IBankTest {
     }
 
     @Test(expected = RuntimeException.class)
-    public void testMaakOverBedragPositief() throws NumberDoesntExistException
+    public void testMaakOverBedragPositief() throws NumberDoesntExistException, RemoteException
     {
         /* @param bedrag
 	 * is groter dan 0
@@ -74,7 +74,7 @@ public class IBankTest {
     }
 
     @Test
-    public void testMaakOver() throws NumberDoesntExistException
+    public void testMaakOver() throws NumberDoesntExistException, RemoteException
     {
         /* @return <b>true</b> als de overmaking is gelukt, anders <b>false</b>
          */
@@ -93,7 +93,7 @@ public class IBankTest {
 
     }
     @Test(expected = NumberDoesntExistException.class)
-    public void testMaakOverExcp() throws NumberDoesntExistException
+    public void testMaakOverExcp() throws NumberDoesntExistException, RemoteException
     {
         /* @throws NumberDoesntExistException
 	 *             als een van de twee bankrekeningnummers onbekend is
@@ -103,7 +103,7 @@ public class IBankTest {
     }
 
     @Test
-        public void testGetName()
+        public void testGetName() throws RemoteException
         {
             /**
             * @return de naam van deze bank
@@ -112,7 +112,7 @@ public class IBankTest {
         }
 
     @Test
-    public void testGetRekening()
+    public void testGetRekening() throws RemoteException
     {
        	 //* @return de bankrekening met nummer nr mits bij deze bank bekend, anders null
         assertNotNull("Rekeningnummer moet geen null zijn", b1.getRekening(r1));

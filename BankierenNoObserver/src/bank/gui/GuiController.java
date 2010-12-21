@@ -67,36 +67,40 @@ public class GuiController extends UnicastRemoteObject implements RemoteProperty
 	public void logUit() {
 		try {
 			sessie.logUit();
+                        sessie.removeListener(this, "saldo");
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 	}
 		
-	public void maakOver(int bestemming, Money bedrag) {
+	public void maakOver(int bestemming, Money bedrag) throws RemoteException {
 		try{
 			sessie.maakOver(bestemming, bedrag);
-                        System.out.println("MIKE MIKE MAD MIKE");
 		} catch (RemoteException e1) {
 			e1.printStackTrace();
+                        sessie.removeListener(this, "saldo");
 			bankierDialoog.setMessage("verbinding verbroken");
 		} catch (NumberDoesntExistException e1) {
 			e1.printStackTrace();
 			bankierDialoog.setMessage(e1.getMessage());
 		} catch (InvalidSessionException e1) {
 			e1.printStackTrace();
+                        sessie.removeListener(this, "saldo");
 			bankierDialoog.setMessage(e1.getMessage());
 		}
 	}
 
-	public IRekening getRekening() {
+	public IRekening getRekening() throws RemoteException {
 		try{
 			return sessie.getRekening();
 		} catch (RemoteException e) {
 			e.printStackTrace();
+                        sessie.removeListener(this, "saldo");
 			bankierDialoog.setMessage("verbinding verbroken");
 			return null; 
 		} catch (InvalidSessionException e) {
 			e.printStackTrace();
+                        sessie.removeListener(this, "saldo");
 			bankierDialoog.setMessage("bankiersessie is verlopen");
 			return null; 
 		}
