@@ -5,6 +5,8 @@
 
 package bank.internettoegang;
 
+import fontys.observer.RemotePropertyListener;
+import java.beans.PropertyChangeEvent;
 import java.lang.RuntimeException;
 import bank.bankieren.IRekening;
 import bank.bankieren.Bank;
@@ -145,4 +147,42 @@ public class IBankiersessieTest {
          bs.getRekening();
         fail("Sessie is niet meer geldig");
     }
+
+    @Test
+    public void testPropertyListener() throws RemoteException, NumberDoesntExistException, InvalidSessionException
+    {
+
+        MockListener rpl = new MockListener();
+       bs.maakOver(r2, new Money(100, Money.EURO));
+
+       assertFalse("Listener is nog niet toegevoegd", rpl.getAangeroepen());
+        bs.addListener(rpl, "saldo");
+
+        bs.maakOver(r2, new Money(100, Money.EURO));
+
+        assertTrue("Listener is toegevoegd", rpl.getAangeroepen());
+        rpl.setAangeroepen(false);
+
+        bs.removeListener(rpl, "saldo");
+
+        assertFalse("Listener is verwijderd", rpl.getAangeroepen());
+    }
+    class MockListener implements RemotePropertyListener
+    {
+
+        boolean aangeroepen = false;
+            public void propertyChange(PropertyChangeEvent pce) throws RemoteException {
+                setAangeroepen(true);
+            }
+            public void setAangeroepen(boolean aangeroepen)
+            {
+                this.aangeroepen = aangeroepen;
+            }
+            public boolean getAangeroepen()
+            {
+                return aangeroepen;
+            }
+
+
+        }
 }
