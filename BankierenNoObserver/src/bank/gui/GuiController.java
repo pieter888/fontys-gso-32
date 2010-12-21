@@ -1,5 +1,6 @@
 package bank.gui;
 
+import java.beans.PropertyChangeEvent;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -9,8 +10,9 @@ import bank.bankieren.IRekening;
 import bank.bankieren.Money;
 import bank.internettoegang.IBalie;
 import bank.internettoegang.IBankiersessie;
+import fontys.observer.RemotePropertyListener;
 
-public class GuiController extends UnicastRemoteObject {
+public class GuiController extends UnicastRemoteObject implements RemotePropertyListener {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -20,7 +22,10 @@ public class GuiController extends UnicastRemoteObject {
 	private LoginDialoog loginDialoog;
 	private OpenRekeningDialoog openDialoog;
 	private BankiersessieDialoog bankierDialoog;
-	
+
+        public IBankiersessie getSessie() {
+            return sessie;
+        }
 	
 	public GuiController(IBalie balie, String bankNaam) throws RemoteException {
 		this.balie = balie;
@@ -35,6 +40,7 @@ public class GuiController extends UnicastRemoteObject {
 			    loginDialoog.setMessage("accountname or password not correct");
 			}
 			else {
+                                sessie.addListener(this, "saldo");
 				loginDialoog.dispose();
 				bankierDialoog = new BankiersessieDialoog(this);
 				bankierDialoog.setVisible(true);
@@ -100,5 +106,9 @@ public class GuiController extends UnicastRemoteObject {
 		this.openDialoog = new OpenRekeningDialoog(this);
 		openDialoog.setVisible(true);		
 	}
+
+    public void propertyChange(PropertyChangeEvent evt) throws RemoteException {
+        bankierDialoog.setBalance(((Money) evt.getNewValue()).toString());
+    }
 }
 

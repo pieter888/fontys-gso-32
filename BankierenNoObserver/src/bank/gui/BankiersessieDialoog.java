@@ -18,7 +18,7 @@ import bank.bankieren.IRekening;
 import bank.bankieren.Money;
 import fontys.observer.RemotePropertyListener;
 
-public class BankiersessieDialoog extends JFrame implements RemotePropertyListener {
+public class BankiersessieDialoog extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -38,7 +38,7 @@ public class BankiersessieDialoog extends JFrame implements RemotePropertyListen
 	JTextArea taMessages = new JTextArea();
 	JTextArea taAmount = new JTextArea();
 
-	public BankiersessieDialoog(GuiController controller) {
+	public BankiersessieDialoog(GuiController controller) throws RemoteException {
 		this.controller = controller;
 		init();
 		
@@ -125,8 +125,4 @@ public class BankiersessieDialoog extends JFrame implements RemotePropertyListen
 	public void setMessage(String message) {
 		taMessages.setText(message);
 	}
-
-    public void propertyChange(PropertyChangeEvent evt) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }

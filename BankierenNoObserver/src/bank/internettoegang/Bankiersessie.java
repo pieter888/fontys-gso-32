@@ -28,6 +28,7 @@ public class Bankiersessie extends UnicastRemoteObject implements
 		this.bank = bank;
 		
                 this.publisher = new BasicPublisher(new String[]{"saldo"});
+                this.bank.addListener(this, "bank");
 	}
         
 	public boolean isGeldig() {
@@ -46,7 +47,8 @@ public class Bankiersessie extends UnicastRemoteObject implements
 					"source and destination must be different");
 		if (!bedrag.isPositive())
 			throw new RuntimeException("amount must be positive");
-		
+
+
 		return bank.maakOver(reknr, bestemming, bedrag);
 	}
 

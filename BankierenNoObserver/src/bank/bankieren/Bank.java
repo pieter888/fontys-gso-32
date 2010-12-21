@@ -25,7 +25,7 @@ public class Bank extends UnicastRemoteObject implements IBank {
 		clients = new ArrayList<IKlant>();
 		nieuwReknr = 100000000;	
 		this.name = name;
-               // this.publisher = new BasicPublisher(new String[]{"bank"});
+                this.publisher = new BasicPublisher(new String[]{"bank"});
 	}
 
 	public int openRekening(String name, String city) {
