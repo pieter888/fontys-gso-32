@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -86,7 +88,11 @@ public class BankiersessieDialoog extends JFrame {
 		btTransfer.setText("maak over");
 		btTransfer.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				btTransfer_actionPerformed(e);
+                try {
+                    btTransfer_actionPerformed(e);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(BankiersessieDialoog.class.getName()).log(Level.SEVERE, null, ex);
+                }
 			}
 		});
 		taMessages.setBackground(Color.lightGray);
@@ -109,7 +115,7 @@ public class BankiersessieDialoog extends JFrame {
 		});
 	}
 
-	void btTransfer_actionPerformed(ActionEvent e) {
+	void btTransfer_actionPerformed(ActionEvent e) throws RemoteException {
 		int from = Integer.parseInt(lbAccount.getText());
 		int to = Integer.parseInt(taAccount.getText());
 		if (from == to)

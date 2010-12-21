@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import bank.bankieren.IRekening;
 import bank.bankieren.Money;
 import fontys.observer.Publisher;
+import fontys.observer.RemotePropertyListener;
 import fontys.util.InvalidSessionException;
 import fontys.util.NumberDoesntExistException;
 
@@ -50,4 +51,22 @@ public interface IBankiersessie extends Remote, Publisher{
 	 * @throws RemoteException
 	 */
 	IRekening getRekening() throws InvalidSessionException, RemoteException;
+
+        /**
+         * Voeg listener aan publisher
+         * @param listener
+         * @param property
+         * @throws RemoteException
+         *          Als server niet kan worden gevonden
+         */
+        public void addListener(RemotePropertyListener listener, String property) throws RemoteException;
+
+         /**
+         * Voeg listener aan publisher
+         * @param listener
+         * @param property
+         * @throws RemoteException
+         *          Als server niet kan worden gevonden
+         */
+        public void removeListener(RemotePropertyListener listener, String property) throws RemoteException;
 }

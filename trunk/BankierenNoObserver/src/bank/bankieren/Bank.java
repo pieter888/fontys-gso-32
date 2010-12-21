@@ -91,11 +91,11 @@ public class Bank extends UnicastRemoteObject implements IBank {
 		return name;
 	}
 
-    public void addListener(RemotePropertyListener listener, String property) throws RemoteException {
+    public void addListener(RemotePropertyListener listener, String property) {
         publisher.addListener(listener, property);
     }
 
-    public void removeListener(RemotePropertyListener listener, String property) throws RemoteException {
+    public void removeListener(RemotePropertyListener listener, String property) {
         publisher.removeListener(listener, property);
     }
 
