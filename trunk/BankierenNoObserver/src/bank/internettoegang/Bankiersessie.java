@@ -31,8 +31,10 @@ public class Bankiersessie extends UnicastRemoteObject implements
                 this.bank.addListener(this, "bank");
 	}
         
-	public boolean isGeldig() {
+	public boolean isGeldig() throws RemoteException {
+                            this.bank.removeListener(this, "bank");
 		return System.currentTimeMillis() - laatsteAanroep < GELDIGHEIDSDUUR;
+
 	}
 
 	@Override
@@ -52,8 +54,9 @@ public class Bankiersessie extends UnicastRemoteObject implements
 		return bank.maakOver(reknr, bestemming, bedrag);
 	}
 
-	private void updateLaatsteAanroep() throws InvalidSessionException {
+	private void updateLaatsteAanroep() throws InvalidSessionException, RemoteException {
 		if (!isGeldig()) {
+                    bank.removeListener(this, "bank");
 			throw new InvalidSessionException("session has been expired");
 		}
 		
@@ -72,6 +75,8 @@ public class Bankiersessie extends UnicastRemoteObject implements
 	@Override
 	public void logUit() throws RemoteException {
 		UnicastRemoteObject.unexportObject(this, true);
+                this.bank.removeListener(this, "bank");
+
 	}
 
     public void propertyChange(PropertyChangeEvent evt) throws RemoteException {
