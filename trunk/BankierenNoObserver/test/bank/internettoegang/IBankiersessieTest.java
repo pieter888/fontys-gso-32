@@ -130,18 +130,19 @@ public class IBankiersessieTest {
 	 */
 
         // testen: zet Bankiersessie max geldigheid op 600
-        // Thread.sleep(1000);
+         Thread.sleep(1000);
         bs.maakOver(r2, new Money(1, Money.EURO));
         fail("Sessie is niet meer geldig");
     }
 
     @Test(expected = InvalidSessionException.class)
-    public void getRekeningISETest() throws InvalidSessionException, RemoteException
+    public void getRekeningISETest() throws InvalidSessionException, RemoteException, InterruptedException
     {
-        bs.getRekening();
+        
 
         // testen: zet Bankiersessie max geldigheid op 600
-        // Thread.sleep(1000);
+         Thread.sleep(1000);
+         bs.getRekening();
         fail("Sessie is niet meer geldig");
     }
 }
