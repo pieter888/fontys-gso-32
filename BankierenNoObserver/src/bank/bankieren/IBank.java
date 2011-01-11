@@ -1,5 +1,6 @@
 package bank.bankieren;
 
+import centralebank.ICentraleBank;
 import fontys.observer.Publisher;
 import fontys.observer.RemotePropertyListener;
 import fontys.util.*;
@@ -9,7 +10,7 @@ import java.rmi.RemoteException;
  * @author 871059
  * 
  */
-public interface IBank extends Publisher {
+public interface IBank extends Publisher, RemotePropertyListener {
 	/**
 	 * creatie van een nieuwe bankrekening; het gegenereerde bankrekeningnummer
 	 * is identificerend voor de nieuwe bankrekening; als de klant
@@ -52,6 +53,18 @@ public interface IBank extends Publisher {
 	 * @return de naam van deze bank
 	 */
 	String getName() throws RemoteException;
+
+        /**
+         * Methode om de centrale bank te wijzigen
+         * @throws RemoteException
+         */
+        void setCentraleBank(ICentraleBank centraleBank) throws RemoteException;
+
+        /**
+         * @return Centrale bank die bij de bank hoort
+         * @throws RemoteException
+         */
+        public ICentraleBank getCentraleBank() throws RemoteException;
 
         /**
          * Voeg listener aan publisher
