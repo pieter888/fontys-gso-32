@@ -28,7 +28,7 @@ public class Bankiersessie extends UnicastRemoteObject implements
         this.bank = bank;
 
         this.publisher = new BasicPublisher(new String[]{"saldo"});
-        this.bank.addListener(this, "bank");
+        this.bank.addListener(this, reknr + "");
     }
 
     public boolean isGeldig() throws RemoteException {

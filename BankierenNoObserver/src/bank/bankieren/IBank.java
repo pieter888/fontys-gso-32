@@ -83,4 +83,5 @@ public interface IBank extends Publisher, RemotePropertyListener {
          *          Als server niet kan worden gevonden
          */
         public void removeListener(RemotePropertyListener listener, String property) throws RemoteException;
+        public void muteerCentraal(int reknr, Money money) throws RemoteException;
 }

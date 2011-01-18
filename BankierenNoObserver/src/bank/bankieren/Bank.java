@@ -14,6 +14,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 public class Bank extends UnicastRemoteObject implements IBank {
 
@@ -25,12 +26,12 @@ public class Bank extends UnicastRemoteObject implements IBank {
     private BasicPublisher publisher;
     private ICentraleBank centraleBank;
 
-    public Bank(String name) throws RemoteException, NotBoundException, MalformedURLException {
+    public Bank(String name, int id) throws RemoteException, NotBoundException, MalformedURLException {
         accounts = new HashMap<Integer, IRekeningTbvBank>();
         clients = new ArrayList<IKlant>();
-        nieuwReknr = 100000000;
+        nieuwReknr = 10 * id;
         this.name = name;
-        this.publisher = new BasicPublisher(new String[]{"bank"});
+        this.publisher = new BasicPublisher(new String[]{});
     }
 
     public int openRekening(String name, String city) {
@@ -42,6 +43,9 @@ public class Bank extends UnicastRemoteObject implements IBank {
         IRekeningTbvBank account = new Rekening(nieuwReknr, klant, Money.EURO);
         accounts.put(nieuwReknr, account);
         nieuwReknr++;
+
+        this.publisher.addProperty(account.getNr() + "");
+
         return nieuwReknr - 1;
     }
 
@@ -60,6 +64,10 @@ public class Bank extends UnicastRemoteObject implements IBank {
         return accounts.get(nr);
     }
 
+    public IRekeningTbvBank getRekeningTbvCentraleBank(int nr) {
+        return (IRekeningTbvBank) accounts.get(nr);
+    }
+
     public boolean maakOver(int source, int destination, Money money)
             throws NumberDoesntExistException {
         if (source == destination) {
@@ -71,30 +79,44 @@ public class Bank extends UnicastRemoteObject implements IBank {
         }
 
         IRekeningTbvBank source_account = (IRekeningTbvBank) getRekening(source);
-        if (source_account == null) {
-            throw new NumberDoesntExistException("account " + source
-                    + " unknown at " + name);
-        }
+        boolean success = false;
 
-        Money negative = Money.difference(new Money(0, money.getCurrency()),
-                money);
-        boolean success = source_account.muteer(negative);
+        Money negative = Money.difference(new Money(0, money.getCurrency()), money);
+        success = source_account.muteer(negative);
         if (!success) {
             return false;
         }
 
-        IRekeningTbvBank dest_account = (IRekeningTbvBank) getRekening(destination);
-        if (dest_account == null) {
-            throw new NumberDoesntExistException("account " + destination
-                    + " unknown at " + name);
+        if (source_account == null) {
+            throw new NumberDoesntExistException("account " + source + " unknown at " + name);
+        } else {
+            IRekeningTbvBank dest_account = (IRekeningTbvBank) getRekening(destination);
+            if (dest_account == null) {
+                //throw new NumberDoesntExistException("account " + destination
+                //        + " unknown at " + name);
+                try {
+                    String message = this.centraleBank.maakOver(source, destination, money);
+                    if (message.equals("overgemaakt")) {
+                        success = true;
+                        System.out.println(message);
+                    } else {
+                        System.out.println(message);
+                        success = false;
+                    }
+                } catch (RemoteException ex) {
+                    success = false;
+                }
+            } else {
+                success = dest_account.muteer(money);
+                publisher.inform(publisher, dest_account.getNr() + "", null, this);
+            }
         }
-        success = dest_account.muteer(money);
 
-        if (!success) // rollback
+        if (!success) //rollback
         {
             source_account.muteer(money);
         } else {
-            publisher.inform(publisher, "bank", null, this);
+            publisher.inform(publisher, source_account.getNr() + "", null, this);
         }
 
         return success;
@@ -115,6 +137,7 @@ public class Bank extends UnicastRemoteObject implements IBank {
 
     public void setCentraleBank(ICentraleBank centraleBank) throws RemoteException {
         this.centraleBank = centraleBank;
+        this.centraleBank.addBank(this);
     }
 
     public ICentraleBank getCentraleBank() throws RemoteException {
@@ -122,9 +145,20 @@ public class Bank extends UnicastRemoteObject implements IBank {
     }
 
     public void propertyChange(PropertyChangeEvent pce) throws RemoteException {
-        if(pce.getPropertyName().equals("centralebank")) {
+        if (pce.getPropertyName().equals("centralebank")) {
             ICentraleBank centraleBank = (ICentraleBank) pce.getNewValue();
             this.setCentraleBank(centraleBank);
+        }
+    }
+
+    public void muteerCentraal(int reknr, Money money) throws RemoteException {
+        IRekeningTbvBank dest_account = (IRekeningTbvBank) this.getRekening(reknr);
+        if (dest_account != null) {
+            boolean success = dest_account.muteer(money);
+
+            if (success) {
+                publisher.inform(publisher, reknr + "", null, this);
+            }
         }
     }
 }
