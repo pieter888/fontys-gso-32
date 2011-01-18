@@ -44,18 +44,17 @@ public class Server extends javax.swing.JFrame implements RemotePropertyListener
             props.store(out, null);
             out.close();
 
+            ICentraleBank cb = (ICentraleBank) Naming.lookup("rmi://localhost:1099/CentraleBank");
+
             //Variabelen initializeren
-            this.bank = new Bank(nameBank);
+            this.bank = new Bank(nameBank, cb.aantalBanken()+1);
             this.balie = new Balie(this.bank);
 
             //Bind bank
-            Naming.rebind("Bank", this.bank);
+            Naming.rebind(this.bank.getName(), this.balie);
 
-            //Listener toevoegen
-            this.bank.setCentraleBank((ICentraleBank) Naming.lookup("rmi://localhost:1099/CentraleBank"));
-            this.bank.getCentraleBank().addListener(this.bank, "centralebank");
-
-            //TODO: zorgen dat de bank ook bekend is bij de centrale bank
+            //Centrale bank ophalen en aanmelden bij centrale bank
+            this.bank.setCentraleBank(cb);
         } catch (UnknownHostException ex) {
             ex.printStackTrace();
         } catch (FileNotFoundException ex) {

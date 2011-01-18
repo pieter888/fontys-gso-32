@@ -32,23 +32,15 @@ public class Server extends javax.swing.JFrame {
         initComponents();
 
         //Variabelen initializeren
-        this.centraleBank = new CentraleBank(naam, this);
+        this.centraleBank = new CentraleBank(naam);
 
         //Create RMI registry
         LocateRegistry.createRegistry(1099);
         System.setProperty("java.rmi.server.codebase", "http://localhost/bank/");
         Naming.rebind("CentraleBank", this.centraleBank);
 
-        //Informatie weergeven
-        try {
-            this.updateInfo();
-        } catch (RemoteException ex) {
-            JOptionPane.showMessageDialog(this, "Er is een fout opgetreden met het verbinden met de bank.\n"
-                    + "Het is mogelijk dat niet alle informatie up-to-date is!", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-
         //Maak zichtbaar
-        this.setVisible(true);
+        this.setVisible(false);
     }
 
     /** This method is called from within the constructor to
@@ -60,90 +52,22 @@ public class Server extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        lblBanken = new javax.swing.JLabel();
-        cbBanken = new javax.swing.JComboBox();
-        pnlBankInfo = new javax.swing.JPanel();
-        lblBankNaam = new javax.swing.JLabel();
-        lblTotaalGeld = new javax.swing.JLabel();
-        btnToonBankInformatie = new javax.swing.JButton();
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Centrale Bank");
-
-        lblBanken.setText("Banken:");
-
-        pnlBankInfo.setBorder(javax.swing.BorderFactory.createTitledBorder("Informatie over de bank"));
-
-        lblBankNaam.setText("Naam: -");
-
-        lblTotaalGeld.setText("Geld: -");
-
-        javax.swing.GroupLayout pnlBankInfoLayout = new javax.swing.GroupLayout(pnlBankInfo);
-        pnlBankInfo.setLayout(pnlBankInfoLayout);
-        pnlBankInfoLayout.setHorizontalGroup(
-            pnlBankInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlBankInfoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlBankInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblBankNaam)
-                    .addComponent(lblTotaalGeld))
-                .addContainerGap(222, Short.MAX_VALUE))
-        );
-        pnlBankInfoLayout.setVerticalGroup(
-            pnlBankInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlBankInfoLayout.createSequentialGroup()
-                .addComponent(lblBankNaam)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblTotaalGeld))
-        );
-
-        btnToonBankInformatie.setText("Toon informatie");
-        btnToonBankInformatie.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnToonBankInformatieActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblBanken)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cbBanken, 0, 126, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnToonBankInformatie))
-                    .addComponent(pnlBankInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+            .addGap(0, 302, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblBanken)
-                    .addComponent(cbBanken, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnToonBankInformatie))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlBankInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12))
+            .addGap(0, 113, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnToonBankInformatieActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnToonBankInformatieActionPerformed
-        try {
-            this.updateBankInfo(this.getSelectedBank());
-        } catch (RemoteException ex) {
-            JOptionPane.showMessageDialog(this, "Er is een fout opgetreden met het verbinden met de bank.\n"
-                    + "Het is mogelijk dat niet alle informatie up-to-date is!", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_btnToonBankInformatieActionPerformed
 
     /**
      * @param args the command line arguments
@@ -157,16 +81,6 @@ public class Server extends javax.swing.JFrame {
         } catch (ArrayIndexOutOfBoundsException ex) {
             JOptionPane.showMessageDialog(null, "Er moet wel een naam voor de centrale bank worden opgegeven!", "Error", JOptionPane.ERROR_MESSAGE);
         }
-
-        //TODO: debug!
-        if (server != null) {
-            int counter = server.getCentraleBank().getBanken().size();
-
-            if (counter == 0) {
-                server.getCentraleBank().addBank(new Bank("ABN Amro"));
-                server.getCentraleBank().addBank(new Bank("Rabobank"));
-            }
-        }
     }
 
     /**
@@ -176,65 +90,6 @@ public class Server extends javax.swing.JFrame {
         return this.centraleBank;
     }
 
-    /**
-     * Update informatie over de centrale bank in het frame
-     * @throws RemoteException
-     */
-    public void updateInfo() throws RemoteException {
-        //Title
-        this.setTitle("Centrale Bank - " + this.centraleBank.getNaam());
-
-        //Combobox met banken
-        this.cbBanken.removeAllItems();
-
-        for (IBank bank : this.centraleBank.getBanken()) {
-            this.cbBanken.addItem(bank.getName());
-        }
-
-        //Update bank informatie
-        this.updateBankInfo(this.getSelectedBank());
-    }
-
-    /**
-     * Update informatie over de meegegeven bank in het frame
-     *
-     * @param bank Bank die weergegeven moet worden
-     * @throws RemoteException
-     */
-    public void updateBankInfo(IBank bank) throws RemoteException {
-        String name = "-";
-        String geld = "-";
-
-        if (bank != null) {
-            name = bank.getName();
-
-            //TODO
-            geld = "100,00";
-        }
-
-        this.lblBankNaam.setText("Naam: " + name);
-        this.lblTotaalGeld.setText("Geld: " + geld);
-    }
-
-    /**
-     * @return Het IBank object dat bij het geselecteerde combobox veld hoort
-     * @throws RemoteException
-     */
-    public IBank getSelectedBank() throws RemoteException {
-        for (IBank bank : this.centraleBank.getBanken()) {
-            if (((String) this.cbBanken.getSelectedItem()).equalsIgnoreCase(bank.getName())) {
-                return bank;
-            }
-        }
-
-        return null;
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnToonBankInformatie;
-    private javax.swing.JComboBox cbBanken;
-    private javax.swing.JLabel lblBankNaam;
-    private javax.swing.JLabel lblBanken;
-    private javax.swing.JLabel lblTotaalGeld;
-    private javax.swing.JPanel pnlBankInfo;
     // End of variables declaration//GEN-END:variables
 }
